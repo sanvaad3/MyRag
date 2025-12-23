@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import logo from "./logo.png";
 import {
   Folder,
@@ -378,13 +379,15 @@ export default function Home() {
           }
         `}
         >
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={createNewConversation}
             className="flex items-center gap-2 px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 mb-4"
           >
             <span className="text-xl">+</span>
             <span>New Chat</span>
-          </button>
+          </motion.button>
 
           {/* Tab Navigation */}
           <div className="space-y-2 mb-4">
@@ -498,27 +501,48 @@ export default function Home() {
             /* Home View - Welcome Screen */
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
               {/* Gradient Orb */}
-              <Image
-                src={logo}
-                alt="logo"
-                height={96}
-                width={96}
-                className="mb-6 md:mb-10 w-16 h-16 md:w-24 md:h-24"
-              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Image
+                  src={logo}
+                  alt="logo"
+                  height={96}
+                  width={96}
+                  className="mb-6 md:mb-10 w-16 h-16 md:w-24 md:h-24"
+                />
+              </motion.div>
 
               {/* Greeting */}
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-2 text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-2 text-center"
+              >
                 Good Afternoon
-              </h1>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 md:mb-12 text-center px-4">
+              </motion.h1>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 md:mb-12 text-center px-4"
+              >
                 What's on{" "}
                 <span className="bg-gradient-to-r from-violet-900 to-pink-600 text-transparent bg-clip-text">
                   your mind?
                 </span>
-              </h2>
+              </motion.h2>
 
               {/* Input Box */}
-              <div className="w-full max-w-3xl mb-8 md:mb-12 px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="w-full max-w-3xl mb-8 md:mb-12 px-4"
+              >
                 <form onSubmit={handleSubmit} className="relative">
                   <textarea
                     value={input}
@@ -533,13 +557,15 @@ export default function Home() {
                     rows={4}
                     className="w-full rounded-2xl border border-gray-300 px-4 sm:px-6 py-3 sm:py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none text-gray-900 shadow-sm text-sm sm:text-base"
                   />
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={!input.trim()}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     className="absolute right-3 sm:right-4 bottom-3 sm:bottom-4 w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center text-base sm:text-lg"
                   >
                     ↑
-                  </button>
+                  </motion.button>
                 </form>
 
                 {/* Action Buttons */}
@@ -565,7 +591,7 @@ export default function Home() {
                     {documents.length} documents • Hybrid search ready
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           ) : activeTab === "chat" ? (
             <>
@@ -573,12 +599,23 @@ export default function Home() {
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
                 <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
                   {messages.length === 0 && (
-                    <div className="text-center text-gray-500 py-12">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center text-gray-500 py-12"
+                    >
                       <p>No messages yet. Start a conversation below!</p>
-                    </div>
+                    </motion.div>
                   )}
-                  {messages.map((message, index) => (
-                    <div key={index}>
+                  <AnimatePresence mode="popLayout">
+                    {messages.map((message, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3 }}
+                      >
                       <div className="flex gap-4">
                         {message.role === "user" ? (
                           <>
@@ -600,9 +637,13 @@ export default function Home() {
                                 message.metadata.citations.length > 0 && (
                                   <div className="mb-3 flex flex-wrap gap-1.5 sm:gap-2">
                                     {message.metadata.citations.map(
-                                      (citation) => (
-                                        <div
+                                      (citation, idx) => (
+                                        <motion.div
                                           key={citation.index}
+                                          initial={{ opacity: 0, scale: 0.8 }}
+                                          animate={{ opacity: 1, scale: 1 }}
+                                          transition={{ duration: 0.2, delay: idx * 0.05 }}
+                                          whileHover={{ scale: 1.05 }}
                                           className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-purple-50 border border-purple-200 rounded-full text-xs sm:text-sm cursor-pointer hover:bg-purple-100 transition-colors"
                                           title={`${
                                             citation.explanation
@@ -624,7 +665,7 @@ export default function Home() {
                                             ).toFixed(0)}
                                             %
                                           </span>
-                                        </div>
+                                        </motion.div>
                                       )
                                     )}
 
@@ -667,10 +708,15 @@ export default function Home() {
                           </>
                         )}
                       </div>
-                    </div>
-                  ))}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                   {isLoading && (
-                    <div className="flex gap-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex gap-4"
+                    >
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center flex-shrink-0">
                         <span className="text-white text-sm">AI</span>
                       </div>
@@ -686,14 +732,16 @@ export default function Home() {
                             style={{ animationDelay: "0.2s" }}
                           ></div>
                         </div>
-                        <button
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={cancelResponse}
                           className="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
                         >
                           Cancel
-                        </button>
+                        </motion.button>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               </div>
@@ -716,13 +764,15 @@ export default function Home() {
                       rows={3}
                       className="w-full rounded-2xl border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 resize-none text-gray-900 text-sm sm:text-base"
                     />
-                    <button
+                    <motion.button
                       type="submit"
                       disabled={isLoading || !input.trim()}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       className="absolute right-2 sm:right-3 bottom-2 sm:bottom-3 w-7 h-7 sm:w-8 sm:h-8 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                     >
                       <span>↑</span>
-                    </button>
+                    </motion.button>
                   </form>
                 </div>
               </div>
@@ -760,17 +810,25 @@ export default function Home() {
 
                 {/* Document List */}
                 {documents.length === 0 ? (
-                  <div className="text-center text-gray-500 py-12">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center text-gray-500 py-12"
+                  >
                     <p className="text-lg">No documents uploaded yet</p>
                     <p className="text-sm mt-2">
                       Upload your first document to enable hybrid search!
                     </p>
-                  </div>
+                  </motion.div>
                 ) : (
                   <div className="space-y-3 sm:space-y-4">
-                    {documents.map((doc) => (
-                      <div
+                    {documents.map((doc, index) => (
+                      <motion.div
                         key={doc.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        whileHover={{ scale: 1.02, borderColor: "#a855f7" }}
                         className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-purple-500 transition-colors"
                       >
                         <div className="flex items-start justify-between">
@@ -795,7 +853,7 @@ export default function Home() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 )}
@@ -898,27 +956,48 @@ export default function Home() {
 
         <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
           {/* Gradient Orb */}
-          <Image
-            src={logo}
-            alt="logo"
-            height={96}
-            width={96}
-            className="mb-6 md:mb-10 w-16 h-16 md:w-24 md:h-24"
-          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Image
+              src={logo}
+              alt="logo"
+              height={96}
+              width={96}
+              className="mb-6 md:mb-10 w-16 h-16 md:w-24 md:h-24"
+            />
+          </motion.div>
 
           {/* Greeting */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-2 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-2 text-center"
+          >
             Good Afternoon
-          </h1>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 md:mb-12 text-center px-4">
+          </motion.h1>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 md:mb-12 text-center px-4"
+          >
             What's on{" "}
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
               your mind?
             </span>
-          </h2>
+          </motion.h2>
 
           {/* Input Box */}
-          <div className="w-full max-w-3xl mb-8 md:mb-12 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="w-full max-w-3xl mb-8 md:mb-12 px-4"
+          >
             <form onSubmit={handleSubmit} className="relative">
               <textarea
                 value={input}
@@ -933,13 +1012,15 @@ export default function Home() {
                 rows={4}
                 className="w-full rounded-2xl border border-gray-300 px-4 sm:px-6 py-3 sm:py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none text-gray-900 shadow-sm text-sm sm:text-base"
               />
-              <button
+              <motion.button
                 type="submit"
                 disabled={!input.trim()}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 className="absolute right-3 sm:right-4 bottom-3 sm:bottom-4 w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center text-base sm:text-lg"
               >
                 ↑
-              </button>
+              </motion.button>
             </form>
 
             {/* Action Buttons */}
@@ -965,7 +1046,7 @@ export default function Home() {
                 {documents.length} documents • Hybrid search ready
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
