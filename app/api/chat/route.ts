@@ -26,10 +26,6 @@ export async function POST(req: NextRequest) {
     const allChunks = documentStore.getAllChunks()
     const hasDocuments = allChunks.length > 0
 
-    console.log(`📊 Document store status:`)
-    console.log(`  - Documents: ${allDocuments.length}`)
-    console.log(`  - Total chunks: ${allChunks.length}`)
-
     let relevantResults: SearchResult[] = []
     let retrievalInfo = ''
 
@@ -77,14 +73,6 @@ export async function POST(req: NextRequest) {
       keywordScore: result.keywordScore,
       explanation: result.explanation
     }))
-
-    // DEBUG: Log what we're sending to the AI
-    console.log('\n🔍 DEBUG INFO:')
-    console.log('Has documents:', hasDocuments)
-    console.log('Relevant results count:', relevantResults.length)
-    console.log('Relevant context length:', relevantContext.length)
-    console.log('First 500 chars of context:', relevantContext.substring(0, 500))
-    console.log('---\n')
 
     // Build the system prompt with or without context
     const systemPrompt = hasDocuments && relevantResults.length > 0
